@@ -27,11 +27,15 @@ q4 = 'SELECT * FROM facts WHERE population == (SELECT MIN(population) FROM facts
 pop_out = conn.execute(q4).fetchall()
 # print(pop_out)
 
-#Histogram excluding MIN/MAX population values
-# q5 = 'SELECT population, population_growth, birth_rate, death_rate FROM facts WHERE population != (SELECT MAX(population) FROM facts) OR population != (SELECT MIN(population) FROM facts)'
-# fig = plt.figure(figsize=(10,10))
-# ax = fig.add_subplot(111)
-# pd.read_sql_query(q5, conn).hist(ax=ax)
+q5 = 'SELECT population, name Country FROM facts WHERE population != (SELECT MAX(population) FROM facts) ORDER BY 1 DESC LIMIT 10'
+plotter = pd.read_sql_query(q5, conn)
+ax = plotter[['population']].plot(kind='bar', title='NAME', figsize=(5,5))
+ax.set_xlabel('Country')
+ax.set_ylabel('Population (Billions)')
+ax.set_xticklabels(plotter.Country)
+plt.show()
+print()
+print(plotter)
 
 #Ratio Fun
 q6 = 'SELECT name Country, CAST(population as float)/CAST(area_land as float) "Population Density" FROM facts ORDER BY "Population Density" DESC LIMIT 5'
